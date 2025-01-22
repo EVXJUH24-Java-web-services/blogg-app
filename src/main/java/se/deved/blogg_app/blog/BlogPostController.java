@@ -1,20 +1,17 @@
 package se.deved.blogg_app.blog;
 
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import se.deved.blogg_app.comment.CommentController;
 import se.deved.blogg_app.user.User;
 import se.deved.blogg_app.utility.ErrorResponseDTO;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @RestController
@@ -25,9 +22,12 @@ public class BlogPostController {
     private final BlogPostService blogPostService;
 
     @PostMapping
-    public ResponseEntity<?> createPost(@RequestBody CreateBlogPostDTO createBlogPost) {
+    public ResponseEntity<?> createPost(
+            @RequestBody CreateBlogPostDTO createBlogPost,
+            @AuthenticationPrincipal User user
+    ) {
         try {
-            BlogPost post = blogPostService.createPost(createBlogPost.content, createBlogPost.commentsDisabled, createBlogPost.userId);
+            BlogPost post = blogPostService.createPost(createBlogPost.content, createBlogPost.commentsDisabled, user);
             return ResponseEntity.ok(BlogPostResponseDTO.fromModel(post));
         } catch (Exception exception) {
             return ResponseEntity.badRequest().body(new ErrorResponseDTO(exception.getMessage()));
@@ -65,7 +65,6 @@ public class BlogPostController {
     public static class CreateBlogPostDTO {
         public String content;
         public boolean commentsDisabled;
-        public UUID userId;
     }
 
     @AllArgsConstructor

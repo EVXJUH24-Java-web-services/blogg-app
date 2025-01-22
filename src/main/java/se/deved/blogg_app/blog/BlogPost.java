@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import se.deved.blogg_app.comment.Comment;
 import se.deved.blogg_app.user.User;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,5 +36,6 @@ public class BlogPost {
         this.commentsDisabled = commentsDisabled;
         this.content = content;
         this.user = user;
+        this.comments = new ArrayList<>();
     }
 }

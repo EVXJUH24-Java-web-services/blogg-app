@@ -1,6 +1,7 @@
 package se.deved.blogg_app.user;
 
 import lombok.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,10 +28,28 @@ public class UserController {
         }
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginUserDTO loginUser) {
+        try {
+            String token = userService.login(loginUser.username, loginUser.password);
+            return ResponseEntity.ok(token);
+        } catch (Exception exception) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Wrong username or password");
+        }
+    }
+
     @NoArgsConstructor
     @AllArgsConstructor
     @Data
     public static class CreateUserDTO {
+        public String username;
+        public String password;
+    }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Data
+    public static class LoginUserDTO {
         public String username;
         public String password;
     }

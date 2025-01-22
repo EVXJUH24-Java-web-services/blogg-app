@@ -16,8 +16,8 @@ public class BlogPostService {
     private final BlogPostRepository blogPostRepository;
     private final UserRepository userRepository;
 
-    public BlogPost createPost(String content, boolean commentsDisabled, UUID userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+    public BlogPost createPost(String content, boolean commentsDisabled, User user) {
+        //User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         BlogPost post = new BlogPost(content, commentsDisabled, user);
 
