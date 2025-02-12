@@ -26,6 +26,9 @@ public class User implements UserDetails {
     @Id
     private UUID id;
 
+    private String oidcId = null;
+    private String oidcProvider = null;
+
     private String name;
     private String password;
     private boolean admin = false;

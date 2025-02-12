@@ -8,6 +8,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import se.deved.blogg_app.security.JWTService;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
@@ -39,6 +41,16 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
+    // Skapa och koppla en OpenID-connect användare med vår egen model (User)
+    public User createOpenIdUser(String username, String oidcId) {
+        User user = new User(username, null);
+        user.setOidcId(oidcId);
+        user.setOidcProvider("github"); // Vi använder bara GitHub så vi kan hårdkoda denna.
+
+        // INSERT INTO user () VALUES ();
+        return userRepository.save(user);
+    }
+
     public String login(String username, String password) {
         User user = userRepository.findByName(username).orElseThrow();
 
@@ -47,6 +59,10 @@ public class UserService implements UserDetailsService {
         }
 
         return jwtService.generateToken(user.getId());
+    }
+
+    public Optional<User> findByOpenId(String id) {
+        return userRepository.findByOidcId(id);
     }
 
     @Override

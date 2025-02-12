@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import se.deved.blogg_app.user.UserRepository;
@@ -22,8 +23,9 @@ public class SecurityConfig {
             HttpSecurity http,
             JWTService jwtService,
             UserRepository userRepository,
-            UserService userService
-    ) throws Exception {
+            UserService userService,
+            OAuth2SuccessHandler oAuth2SuccessHandler
+            ) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .userDetailsService(userService)
                 .authorizeHttpRequests(auth -> auth
@@ -33,7 +35,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/admin/delete-post").hasRole("ADMIN")
                         .anyRequest().permitAll()
                 )
-                .addFilterBefore(new AuthenticationFilter(jwtService, userRepository), UsernamePasswordAuthenticationFilter.class);
+                .oauth2Login(oauth -> {
+                    oauth.successHandler(oAuth2SuccessHandler);
+                })
+                .addFilterAfter(new AuthenticationFilter(jwtService, userRepository), OAuth2LoginAuthenticationFilter.class);
 
         return http.build();
     }
