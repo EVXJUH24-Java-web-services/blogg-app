@@ -3,10 +3,7 @@ package se.deved.blogg_app.user;
 import lombok.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import se.deved.blogg_app.utility.ErrorResponseDTO;
 
 import java.util.UUID;
@@ -36,6 +33,11 @@ public class UserController {
         } catch (Exception exception) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Wrong username or password");
         }
+    }
+
+    @GetMapping("{userId}")
+    public ResponseEntity<?> getUserInfo(@PathVariable UUID userId) {
+        return ResponseEntity.ok().body("temp");
     }
 
     @NoArgsConstructor

@@ -32,6 +32,9 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         OAuth2AuthenticationToken oauth2Token = (OAuth2AuthenticationToken) authentication;
         // Hämta ut OAuth2 användaren som kommer med token inputten
         OAuth2User oAuth2User = oauth2Token.getPrincipal();
+
+        System.out.println(oauth2Token.getAuthorizedClientRegistrationId());
+
         // Hämta ut id:t på OAuth2 användaren (det är ett id även om det kallas name)
         String oidcId = oAuth2User.getName();
         // Hämta ut användarnamnet på OAuth2 användaren (det riktiga namnet), alltså GitHub namnet

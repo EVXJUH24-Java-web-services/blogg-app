@@ -25,7 +25,7 @@ public class SecurityConfig {
             UserRepository userRepository,
             UserService userService,
             OAuth2SuccessHandler oAuth2SuccessHandler
-            ) throws Exception {
+    ) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .userDetailsService(userService)
                 .authorizeHttpRequests(auth -> auth

@@ -3,13 +3,19 @@ package se.deved.blogg_app.blog;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import se.deved.blogg_app.comment.CommentController;
 import se.deved.blogg_app.user.User;
+import se.deved.blogg_app.user.UserController;
 import se.deved.blogg_app.utility.ErrorResponseDTO;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -28,7 +34,16 @@ public class BlogPostController {
     ) {
         try {
             BlogPost post = blogPostService.createPost(createBlogPost.content, createBlogPost.commentsDisabled, user);
-            return ResponseEntity.ok(BlogPostResponseDTO.fromModel(post));
+
+            EntityModel<BlogPostResponseDTO> entityModel = EntityModel.of(BlogPostResponseDTO.fromModel(post));
+
+            Link userLink = WebMvcLinkBuilder.linkTo(
+                    WebMvcLinkBuilder.methodOn(UserController.class).getUserInfo(post.getUser().getId())
+            ).withRel("user");
+
+            entityModel.add(userLink);
+
+            return ResponseEntity.ok(entityModel);
         } catch (Exception exception) {
             return ResponseEntity.badRequest().body(new ErrorResponseDTO(exception.getMessage()));
         }
@@ -69,7 +84,7 @@ public class BlogPostController {
 
     @AllArgsConstructor
     @Getter
-    public static class BlogPostResponseDTO {
+    public static class BlogPostResponseDTO extends RepresentationModel<BlogPostResponseDTO> {
         private UUID id;
         private String content;
         private int likes, dislikes;

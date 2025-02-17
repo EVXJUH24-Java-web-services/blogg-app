@@ -37,6 +37,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             if (potentialOAuth2Authentication instanceof OAuth2AuthenticationToken oauth2Token) {
                 // Hämta ut OAuth2 användaren och dess id
                 OAuth2User oAuth2User = oauth2Token.getPrincipal();
+
                 String oidcId = oAuth2User.getName();
 
                 // Kolla om användaren (våran användare) finns i databas
